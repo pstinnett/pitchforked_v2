@@ -1,0 +1,39 @@
+<html>
+<head>
+	<title><%= @title || SiteConfig.title %></title>
+	<link href="/main.css" rel="stylesheet" type="text/css" />
+	<link href="/css/page-player.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+	<script type="text/javascript" src="/js/soundmanager2.js"></script>
+	<script type="text/javascript" src="/js/page-player.js"></script>
+	<script type="text/javascript">
+		soundManager.url = '/swf/'
+		soundManager.debugMode = true;
+		soundManager.useFlashBlock = true;      // better handling of SWF if load fails, let user unblock. See demo.
+		soundManager.useHTML5Audio = true;     // beta feature: Use HTML5 Audio() where supported.
+	</script>
+</head>
+<body>
+	<div id="container">
+		<div id="header">
+			<div id="logo">
+				<h1><a href="/"><%=SiteConfig.title%></a></h1>
+			</div>
+		</div>
+		<div id="content">
+			<%= yield %>
+		</div>
+		<div id="footer">
+
+		</div>
+	</div>
+<script type="text/javascript">
+soundManager.onready(function() {
+  if (soundManager.supported()) {
+    // soundManager.createSound() etc. may now be called
+    pagePlayer.initDOM();
+  }
+});
+</script>
+</body>
+</html>

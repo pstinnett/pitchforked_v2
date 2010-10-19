@@ -1,0 +1,54 @@
+.card1 {
+	background: #FFF;
+	padding: 20px;
+}
+
+div#playerMeta {
+	padding-top: 80%;
+	text-align: center;
+}
+
+p#playerSong {
+	padding: 10px 0px 3px 0px;
+	background: rgba(0,0,0,0.7);
+	font-size:25px;
+	color:#FFF;
+	text-shadow: 3px 5px 3px #000;
+	font-weight: bold;
+}
+
+p#playerArtist {
+	padding: 0px 0px 10px 0px;
+	background: rgba(0,0,0,0.7);
+	font-size: 20px;
+	color: #FFF;
+	text-shadow: 3px 5px 3px #000;
+}
+
+div#details {
+	background: url("/img/mobile/details-bg.png");
+	height: 100%;
+	width: 100%;
+	padding: 20px;
+}
+
+div#details p#meta {
+	font-size: 20px;
+	color: #FFF;
+	text-shadow: 3px 5px 3px #000;
+	padding-left: 10px;
+}
+div#details p span#score {
+	font-size: 100px;
+	color: #FFF;
+	text-shadow: 3px 5px 3px #000;
+}
+div#details p span#title {
+	font-size: 20px;
+	color: #FFF;
+	padding-left: 10px;
+	text-shadow: 3px 5px 3px #000;
+}
+div#details p span.song {
+	font-weight: bold;
+}

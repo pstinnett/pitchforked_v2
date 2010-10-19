@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Pitchforked</title>
+	<!--<meta name="apple-mobile-web-app-capable" content="yes" />-->
+
+	<!-- Sencha Touch CSS -->
+	<link rel="stylesheet" href="/css/sencha/sencha-touch.css" type="text/css">
+	<link rel="stylesheet" href="/css/mobile.css" type="text/css">
+	<link rel="stylesheet" href="/css/page-player.css">
+	<!-- Sencha Touch JS -->
+	<script type="text/javascript" src="/js/sencha/ext-touch-debug.js"></script>
+
+	<!-- Application JS -->
+	<script type="text/javascript" src="/js/mobile.js"></script>
+	<!--<script type="text/javascript" src="/js/soundmanager2.js"></script>-->
+	<script type="text/javascript" src="/js/page-player.js"></script>
+	<script type="text/javascript">
+		soundManager.url = '/swf/'
+		soundManager.debugMode = true;
+		soundManager.useFlashBlock = true;      // better handling of SWF if load fails, let user unblock. See demo.
+		soundManager.useHTML5Audio = true;     // beta feature: Use HTML5 Audio() where supported.
+	</script>
+</head>
+<body>
+	<script type="text/javascript">
+	</script>
+</body>
+</html>
