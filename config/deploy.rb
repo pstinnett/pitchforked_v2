@@ -1,44 +1,32 @@
-set :domain, "dev2.campquiet.com"
 set :application, "pitchforked_v2"
+ 
+# If you aren't deploying to /u/apps/#{application} on the target
+# servers (which is the default), you can specify the actual location
+# via the :deploy_to variable:
 set :deploy_to, "/srv/www/apps/#{application}"
-
-set :user, "root"
-set :use_sudo, false
-
+ 
+# If you aren't using Subversion to manage your source code, specify
+# your SCM below:
 set :scm, :git
-set :repository,  "git@github.com:pstinnett/pitchforked_v2.git"
-set :branch, 'master'
-set :git_shallow_clone, 1
-
-role :web, domain
-role :app, domain
-role :db,  domain, :primary => true
-
+set :repository, "git@github.com:pstinnett/pitchforked_v2.git"
+set :branch, "master"
 set :deploy_via, :remote_cache
-
+ 
+set :user, 'pstinnett'
+set :ssh_options, { :forward_agent => true }
+ 
+role :app, "173.203.196.36"
+role :web, "173.203.196.36"
+role :db,  "173.203.196.36", :primary => true
+ 
 namespace :deploy do
-  task :start do ; end
-  task :stop do ; end
-  # Assumes you are using Passenger
+  desc "Restarting mod_rails with restart.txt"
   task :restart, :roles => :app, :except => { :no_release => true } do
-    run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
+    run "touch #{current_path}/tmp/restart.txt"
   end
-
-  task :finalize_update, :except => { :no_release => true } do
-    run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
-
-    # mkdir -p is making sure that the directories are there for some SCM's that don't save empty folders
-    run <<-CMD
-      rm -rf #{latest_release}/log &&
-      mkdir -p #{latest_release}/public &&
-      mkdir -p #{latest_release}/tmp &&
-      ln -s #{shared_path}/log #{latest_release}/log
-    CMD
-
-    if fetch(:normalize_asset_timestamps, true)
-      stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
-      asset_paths = %w(images css).map { |p| "#{latest_release}/public/#{p}" }.join(" ")
-      run "find #{asset_paths} -exec touch -t #{stamp} {} ';'; true", :env => { "TZ" => "UTC" }
-    end
+ 
+  [:start, :stop].each do |t|
+    desc "#{t} task is a no-op with mod_rails"
+    task t, :roles => :app do ; end
   end
 end

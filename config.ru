@@ -1,6 +1,6 @@
 require 'application'
 
-set :environment, :production
+set :environment, :development
 disable :run
 
 require File.join(File.dirname(__FILE__), 'application.rb')

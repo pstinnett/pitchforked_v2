@@ -23,7 +23,15 @@ pitchforked.Main = {
 		}
 		
 		var nextTrack = function (btn, evt) {
-			alert('this will jump to the next track (or start playing if no track is playing)');
+	        Ext.Ajax.request({
+	            url: '/next',
+				callback: function(response, success, opts) {
+					alert(success);
+				},
+	            success: function(response, opts) {
+	                alert('yes!');
+	            }
+	        });
 		}
 		
 		// These are the icons that get dropped into bars

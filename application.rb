@@ -52,7 +52,7 @@ class Track
 end
 
 # Automatically create the tables if they don't exist
-DataMapper.auto_migrate!
+DataMapper.auto_upgrade!
 
 configure do
   set :views, "#{File.dirname(__FILE__)}/views"
@@ -85,10 +85,19 @@ get '/admin' do
 end
 
 get '/next' do
+  content_type :json
   id = (1+rand(Track.count).to_i)
   tracks = Track.all(:id => id) 
   @track = tracks.first
-  erb :next, :layout => false
+  { :name => @track.name, 
+    :mp3_url => @track.mp3_url, 
+    :artist => @track.artist.name, 
+    :album => @track.album.name,
+    :artwork_url => @track.album.artwork_url,
+    :score => @track.album.pf_score,
+    :review_url => @track.album.pf_url
+  }.to_json
+  erb :next
 end
 
 # scrape page
