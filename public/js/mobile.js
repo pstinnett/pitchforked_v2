@@ -19,19 +19,36 @@ pitchforked.Main = {
 		}
 		
 		var playPause = function (btn, evt) {
-			alert('this will toggle play/pause');
+			soundManager.togglePause('mySound');
 		}
 		
 		var nextTrack = function (btn, evt) {
-	        Ext.Ajax.request({
-	            url: '/next',
-				callback: function(response, success, opts) {
-					alert(success);
-				},
-	            success: function(response, opts) {
-	                alert('yes!');
-	            }
-	        });
+			alert('next track buttn');
+		}
+		
+		var makeAjaxRequest = function() {
+			Ext.Ajax.request({
+            	url: '/next',
+				method: 'GET',
+		        jsonData: {success : 'true'},
+		        success: 
+		            function(result, request) {
+						var jsonData = Ext.util.JSON.decode(result.responseText);
+		                audioPlayer.update(jsonData);
+						details.update(jsonData);
+						soundManager.destroySound('mySound');
+						soundManager.play(
+							'mySound', {
+								url: jsonData.mp3_url,
+								onfinish: makeAjaxRequest
+							}
+						);
+		            },
+		        failure: 
+		            function(result, request) {
+		                alert('Failed to load song: ' + result.responseText);
+		            }
+        	});
 		}
 		
 		// These are the icons that get dropped into bars
@@ -53,7 +70,7 @@ pitchforked.Main = {
 				ui: 'dark',
 				dock: 'top',
 				items: topItems,
-				defaults: { handler: nextTrack }
+				defaults: { handler: makeAjaxRequest }
 			}, 
 			{
 			    xtype: 'toolbar',
@@ -67,13 +84,34 @@ pitchforked.Main = {
 		//Set up player area
 		var artworkUrl = 'http://cdn.pitchfork.com/media/forget200.jpg';
 		var artistName = 'Animal Collective';
-		var audioPlayer = '<div id="playerArtwork" style="-webkit-box-reflect: below 10px;background:url('+artworkUrl+') no-repeat #000;background-size: 100%;height:100%;width:100%;">';
-		audioPlayer += '<div id="playerMeta"><p id="playerSong">My Girls</p>';
-		audioPlayer += '<p id="playerArtist">Animal Collective</p></div>'
-		audioPlayer += '</div>';
+		var audioPlayer = new Ext.Component({
+			title: 'AudioPlayer',
+			cls: 'audioplayer',
+			tpl: [              // Set up a template to display tweet data
+			'<tpl for=".">',
+			  '<div id="playerArtwork" style="background:url({artwork_url}) no-repeat #000;">',
+			    '<div id="playerMeta"><p id="playerSong">{title}</p>',
+			    '<p id="playerArtist">{artist}</p></div>',
+			  '</div>',
+			'</tpl>'
+			]
+		});
 		
-		//Set up background (details) area
-		var details = '<div id="details"><p><span id="title">Pitchfork Score</span><br/><span id="score">10.0</span></p><p id="meta"><span class="song">My Girls</span><br /><span class="album">Merriweather Post Pavilion</span><br /><span class="artist">Animal Collective</span></p></div>';
+		var details = new Ext.Component({
+			title: 'Details',
+			cls: 'details',
+			tpl: [
+			'<tpl for=".">',
+			  '<div id="details">',
+			  '<p><span id="title">Pitchfork Score</span><br/>',
+			  '<span id="score">{score}</span></p>',
+			  '<p id="meta"><span class="song">{name}</span><br />',
+			  '<span class="album">{album}</span><br />', 
+			  '<span class="artist">{artist}</span></p></div>',
+			'</tpl>'
+			]
+		});
+
 		// Init main pitchforked item
 		var pitchforked = new Ext.Panel({
 		    id: 'buttonsPanel',
@@ -97,16 +135,12 @@ pitchforked.Main = {
 					});
 				}
 			},
-			items: [{
-				html: [audioPlayer],
-			},{
-				html: [details],
-			}],
+			items: [audioPlayer, details],
 			
 		});
 		var activeCard = 0;
 		pitchforked.setCard( activeCard );
-		Ext.Msg.alert('Pitchforked', 'Welcome to Pitchforked, the best way to listen to Pitchfork.coms best new music. Tap OK to listen!', Ext.emptyFn);
+		Ext.Msg.alert('Pitchforked', 'Welcome to Pitchforked, the best way to listen to Pitchfork.coms best new music. Tap OK to listen!', makeAjaxRequest);
 	}
 }
 
@@ -121,7 +155,7 @@ Ext.setup({
 		soundManager.onready(function() {
 		  if (soundManager.supported()) {
 		    // soundManager.createSound() etc. may now be called
-		    //pagePlayer.initDOM();
+		    pagePlayer.initDOM();
 		  }
 		});
 	}

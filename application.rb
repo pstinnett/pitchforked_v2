@@ -93,11 +93,11 @@ get '/next' do
     :mp3_url => @track.mp3_url, 
     :artist => @track.artist.name, 
     :album => @track.album.name,
+    :title => @track.name,
     :artwork_url => @track.album.artwork_url,
     :score => @track.album.pf_score,
     :review_url => @track.album.pf_url
   }.to_json
-  erb :next
 end
 
 # scrape page

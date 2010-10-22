@@ -1,3 +1,6 @@
+body {
+	background: #111;
+}
 .card1 {
 	background: #FFF;
 	padding: 20px;
@@ -23,6 +26,13 @@ p#playerArtist {
 	font-size: 20px;
 	color: #FFF;
 	text-shadow: 3px 5px 3px #000;
+}
+
+#playerArtwork {
+	-webkit-box-reflect: below 10px;
+	background-size: 100%;
+	height:100%;
+	width:100%;
 }
 
 div#details {
