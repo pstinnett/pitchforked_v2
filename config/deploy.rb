@@ -13,6 +13,7 @@ set :branch, "master"
 set :deploy_via, :remote_cache
  
 set :user, 'pstinnett'
+set :use_sudo, 'false'
 set :ssh_options, { :forward_agent => true }
  
 role :app, "173.203.196.36"

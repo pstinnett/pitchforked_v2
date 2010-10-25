@@ -5,7 +5,7 @@ var soundManagerHtml = '<div id="control-template"><div class="controls"><div cl
 pitchforked.Main = {
 	demo : function() {
 		//this handles the taps. may need to be expanded.
-		var tapHandler = function (btn, evt) {
+		var flipCard = function (btn, evt) {
 			if( activeCard == 0 )
 			{
 		    	pitchforked.setCard(1);
@@ -20,10 +20,6 @@ pitchforked.Main = {
 		
 		var playPause = function (btn, evt) {
 			soundManager.togglePause('mySound');
-		}
-		
-		var nextTrack = function (btn, evt) {
-			alert('next track buttn');
 		}
 		
 		var makeAjaxRequest = function() {
@@ -54,11 +50,12 @@ pitchforked.Main = {
 		// These are the icons that get dropped into bars
 		var topItems = [
 			{ xtype: 'spacer' },
-			{ iconMask: true, iconCls: 'refresh' }	
+			{ iconMask: true, iconCls: 'tag', handler: flipCard }	
 		]
 		var bottomItems = [
 			{ xtype: 'spacer' },
-			{ iconMask: true, iconCls: 'arrow_right', iconAlign: 'center' },
+			{ iconMask: true, iconCls: 'pause', iconAlign: 'center', handler: playPause },
+			{ iconMask: true, iconCls: 'next', iconAlign: 'center', handler: makeAjaxRequest },
 			{ xtype: 'spacer' },
 		]
 		
@@ -82,8 +79,6 @@ pitchforked.Main = {
 		]
 		
 		//Set up player area
-		var artworkUrl = 'http://cdn.pitchfork.com/media/forget200.jpg';
-		var artistName = 'Animal Collective';
 		var audioPlayer = new Ext.Component({
 			title: 'AudioPlayer',
 			cls: 'audioplayer',
@@ -103,11 +98,13 @@ pitchforked.Main = {
 			tpl: [
 			'<tpl for=".">',
 			  '<div id="details">',
-			  '<p><span id="title">Pitchfork Score</span><br/>',
-			  '<span id="score">{score}</span></p>',
+			  '<p><span id="title">Pitchfork Rating</span></p>',
+			  '<p class="score_cont"><img src="/img/mobile/rating.png" /><span id="score">{score}</span></p>',
+			  '<p><img class="note" src="/img/mobile/note.png" /></p>',
 			  '<p id="meta"><span class="song">{name}</span><br />',
 			  '<span class="album">{album}</span><br />', 
-			  '<span class="artist">{artist}</span></p></div>',
+			  '<span class="artist">{artist}</span></p>',
+			  '</div>',
 			'</tpl>'
 			]
 		});
@@ -120,6 +117,30 @@ pitchforked.Main = {
 		    dockedItems: dockeditems,
 			animation: 'flip',
 			listeners: {
+				beforerender: function(d){
+					if (("standalone" in window.navigator) && !window.navigator.standalone)
+					{
+						if (!this.popup)
+						{
+						      this.popup = new Ext.Panel({
+						          floating: true,
+						          modal: true,
+						          centered: true,
+								  width: '340px',
+								  height: '430px',
+						          styleHtmlContent: true,
+						          html: '<div>Use the <strong>"Add to Home Screen"</strong> function and place an icon on your home screen to run this ' + 'application in full screen mode like a native app. Just tap <strong>"+"</strong> and then <strong>"Add to Home Screen."</strong></div>',
+						          dockedItems: [{
+						              dock: 'top',
+						              xtype: 'toolbar',
+						              title: 'Install Pitchforked!'
+						          }],
+						          scroll: 'vertical'
+						      });
+						}
+						this.popup.show('pop');
+					}
+				},
 				afterrender: function(c){
 					c.body.on('click', function(){
 						if( activeCard == 0 )
@@ -138,15 +159,20 @@ pitchforked.Main = {
 			items: [audioPlayer, details],
 			
 		});
-		var activeCard = 0;
+		var activeCard = 1;
 		pitchforked.setCard( activeCard );
-		Ext.Msg.alert('Pitchforked', 'Welcome to Pitchforked, the best way to listen to Pitchfork.coms best new music. Tap OK to listen!', makeAjaxRequest);
+		if (("standalone" in window.navigator) && window.navigator.standalone)
+			Ext.Msg.alert('Pitchforked', 'Welcome to Pitchforked, a new way to listen to Pitchfork.com\'s best new music. <br /><br />Tap OK to listen!', makeAjaxRequest);
 	}
+}
+
+readReview = function(url) {
+	window.open(url);
 }
 
 Ext.setup({
     tabletStartupScreen: 'tablet_startup.png',
-    phoneStartupScreen: 'phone_startup.png',
+    phoneStartupScreen: '/img/mobile/start-bg.png',
     icon: '/img/mobile/icon.png',
     glossOnIcon: false,
     onReady: function() {
