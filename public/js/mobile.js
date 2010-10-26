@@ -21,8 +21,35 @@ pitchforked.Main = {
 		var playPause = function (btn, evt) {
 			soundManager.togglePause('mySound');
 		}
+		var firstPlay = true;
 		
 		var makeAjaxRequest = function() {
+			if( firstPlay == true )
+			{
+				firstPlay = false;
+				if (("standalone" in window.navigator) && !window.navigator.standalone)
+				{
+					if (!this.popup)
+					{
+					      this.popup = new Ext.Panel({
+					          floating: true,
+					          modal: true,
+					          centered: true,
+							  width: '300px',
+							  height: '330px',
+					          styleHtmlContent: true,
+					          html: '<div>Use the <strong>"Add to Home Screen"</strong> function and place an icon on your home screen to run this ' + 'application in full screen mode like a native app. Just tap <strong>"+"</strong> and then <strong>"Add to Home Screen."</strong><br /><br /><strong>Note:</strong> If you would like to listen to the audio in the background, just tap outside of the border of this message and run Pitchforked within Safari.</div>',
+					          dockedItems: [{
+					              dock: 'top',
+					              xtype: 'toolbar',
+					              title: 'Install Pitchforked!'
+					          }],
+					          scroll: 'vertical',
+					      });
+					}
+					this.popup.show();
+				}
+			}
 			Ext.Ajax.request({
             	url: '/next',
 				method: 'GET',
@@ -95,6 +122,7 @@ pitchforked.Main = {
 		var details = new Ext.Component({
 			title: 'Details',
 			cls: 'details',
+			scroll: 'vertical',
 			tpl: [
 			'<tpl for=".">',
 			  '<div id="details">',
@@ -117,30 +145,6 @@ pitchforked.Main = {
 		    dockedItems: dockeditems,
 			animation: 'flip',
 			listeners: {
-				beforerender: function(d){
-					if (("standalone" in window.navigator) && !window.navigator.standalone)
-					{
-						if (!this.popup)
-						{
-						      this.popup = new Ext.Panel({
-						          floating: true,
-						          modal: true,
-						          centered: true,
-								  width: '340px',
-								  height: '430px',
-						          styleHtmlContent: true,
-						          html: '<div>Use the <strong>"Add to Home Screen"</strong> function and place an icon on your home screen to run this ' + 'application in full screen mode like a native app. Just tap <strong>"+"</strong> and then <strong>"Add to Home Screen."</strong></div>',
-						          dockedItems: [{
-						              dock: 'top',
-						              xtype: 'toolbar',
-						              title: 'Install Pitchforked!'
-						          }],
-						          scroll: 'vertical'
-						      });
-						}
-						this.popup.show('pop');
-					}
-				},
 				afterrender: function(c){
 					c.body.on('click', function(){
 						if( activeCard == 0 )
@@ -159,10 +163,10 @@ pitchforked.Main = {
 			items: [audioPlayer, details],
 			
 		});
-		var activeCard = 1;
+		var activeCard = 0;
 		pitchforked.setCard( activeCard );
-		if (("standalone" in window.navigator) && window.navigator.standalone)
-			Ext.Msg.alert('Pitchforked', 'Welcome to Pitchforked, a new way to listen to Pitchfork.com\'s best new music. <br /><br />Tap OK to listen!', makeAjaxRequest);
+		//if (("standalone" in window.navigator) && window.navigator.standalone)
+		Ext.Msg.alert('Pitchforked', 'Welcome to Pitchforked, a new way to listen to Pitchfork.com\'s best new music. <br /><br />Tap OK to listen!', makeAjaxRequest);
 	}
 }
 
